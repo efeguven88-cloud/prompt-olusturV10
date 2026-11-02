@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f6fb">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="YouTube oyun videoları için thumbnail, başlık ve açıklama promptları; çoklu AI sağlayıcıları, sohbet geçmişi ve prompt kütüphanesi.">
+<title>Prompt Olustur · AI İçerik Stüdyosu</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><div class="bar">
+<button type="button" class="icon menu-btn" id="menuBtn" aria-label="Menüyü aç" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+<div class="brand"><div class="logo" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 6.1L20.5 12l-6.4 2.9L12 21l-2.1-6.1L3.5 12l6.4-2.9z"/></svg></div><div class="brand-copy"><h1>PROMPT OLUSTUR</h1><small>AI İÇERİK STÜDYOSU</small></div></div>
+<nav class="tnav" aria-label="Hızlı gezinme"><button type="button" data-goto="home">Projeler</button><button type="button" data-goto="ai">AI Studio</button><button type="button" data-goto="settings">Ayarlar</button></nav>
+<div class="spacer"></div>
+<button type="button" class="icon" id="searchBtn" aria-label="Projelerde ara"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
+<button type="button" class="icon" id="aiBtn" aria-label="AI Studio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 6.1L20.5 12l-6.4 2.9L12 21l-2.1-6.1L3.5 12l6.4-2.9z"/></svg></button>
+<button type="button" class="icon" id="setBtn" aria-label="Ayarlar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg></button>
+<button type="button" class="icon accent" id="addBtn" aria-label="Yeni proje">+</button>
+</div><div class="searchbar" id="searchbar" hidden><input type="text" id="q" placeholder="Projelerde ara (oyun adı veya konu)" autocomplete="off" aria-label="Projelerde ara"></div></header>
+<div class="scrim" id="scrim" hidden></div>
+<nav class="drawer" id="drawer" aria-label="Projeler"><div class="drawer-head"><span class="logo" aria-hidden="true">✦</span><div><strong>Çalışma alanı</strong><small>Projeler, AI Studio, ayarlar</small></div></div><ul id="navlist"></ul><button type="button" class="btn primary" id="navNew">+ Yeni proje</button></nav>
+<main>
+<section id="viewHome"><div class="hero"><div class="hero-head"><div class="hero-copy"><p class="eyebrow">Çalışma alanı</p><h2>Projelerim</h2><p class="intro" id="heroSub" data-o="Her oyun için ayrı bir proje oluştur. Projenin adı, yazdığın oyunun adı olur.">Her oyun için ayrı bir proje oluştur. Projenin adı, yazdığın oyunun adı olur.</p><div class="hero-actions"><button type="button" class="btn primary" id="heroNew">+ Yeni proje</button><button type="button" class="btn secondary" id="heroAI">✦ AI Studio</button></div></div></div></div>
+<div class="tabs" id="tabs" role="tablist"><button type="button" class="tab" role="tab" data-tab="all">Tümü <i></i></button><button type="button" class="tab" role="tab" data-tab="fav">★ Favoriler <i></i></button><button type="button" class="tab" role="tab" data-tab="lib">📁 Kitaplıklar <i></i></button><button type="button" class="tab" role="tab" data-tab="cal">📅 Takvim <i></i></button><button type="button" class="tab" role="tab" data-tab="stats">📊 İstatistik <i></i></button><button type="button" class="tab" role="tab" data-tab="trash">🗑 Çöp kutusu <i></i></button></div>
+<div class="libbar" id="libbar" hidden><input type="text" id="fname" placeholder="Yeni kitaplık adı (örn. Dönerci)" maxlength="40" autocomplete="off" aria-label="Kitaplık adı"><button type="button" class="btn primary" id="fadd">Kitaplık oluştur</button></div>
+<div class="crumbs" id="homehead" hidden></div>
+<div class="libbar" id="toolbar" hidden><select id="sortSel" aria-label="Sırala"><option value="upd">Sırala: Son düzenlenen</option><option value="name">Sırala: Ada göre</option><option value="date">Sırala: Yayın tarihi</option><option value="status">Sırala: Durum</option></select><select id="statSel" aria-label="Duruma göre filtrele"><option value="">Tüm durumlar</option><option>Fikir</option><option>Çekildi</option><option>Kurgu</option><option>Yayında</option></select><button type="button" class="btn secondary" id="tagChip" hidden></button><button type="button" class="btn secondary" id="viewBtn"></button><button type="button" class="btn secondary" id="selBtn"></button></div>
+<div class="dropbar" id="dropbar" hidden></div>
+<div class="cards" id="cards"></div><p class="hint" id="empty" hidden></p><p class="hint">Projeler bu tarayıcıda saklanır.</p></section>
+<section id="viewAI" hidden>
+<div class="crumbs ai-crumbs">
+<button type="button" class="btn secondary" id="aiBack">← Projelerim</button>
+<span class="pname">AI Studio</span><span class="spacer"></span>
+<span class="ai-status-chip" id="aiStatusChip"><i class="dot"></i><span id="aiStatusText">Bağlantı yok</span></span>
+<button type="button" class="btn secondary" id="aiSettingsBtn">⚙ Ayarlar</button>
+</div>
+<div class="ai-hero">
+<div class="ai-hero-copy"><p class="eyebrow">Çoklu sağlayıcı · Tek çalışma alanı</p><h2>AI Studio</h2><p class="intro">OpenAI, Anthropic, Gemini, Groq, OpenRouter, xAI ve kendi OpenAI uyumlu uç noktanla çalış. Anahtarların yalnızca bu cihazda tutulur; arayüzde asla açık gösterilmez.</p></div>
+<div class="ai-hero-stats" id="aiHeroStats"></div>
+</div>
+<div class="tabs ai-tabs" id="aiTabs" role="tablist" aria-label="AI Studio araçları">
+<button type="button" class="tab on" role="tab" aria-selected="true" data-aitab="chat">💬 Sohbet</button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-aitab="ideas">💡 Fikirler</button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-aitab="prompts">📚 Prompt kütüphanesi</button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-aitab="providers">🔌 Sağlayıcılar</button>
+</div>
+
+<div class="ai-tabpane" id="aiTabChat">
+<div class="ai-shell">
+<aside class="ai-side" id="aiSide" aria-label="Sohbet geçmişi">
+<div class="ai-side-head"><strong>Sohbet geçmişi</strong><button type="button" class="btn primary" id="aiNewChat">+ Yeni</button></div>
+<div class="ai-search"><input type="search" id="aiChatSearch" placeholder="Sohbetlerde ara…" aria-label="Sohbetlerde ara" autocomplete="off"><button type="button" class="icon ai-side-close" id="aiSideClose" aria-label="Geçmişi kapat">✕</button></div>
+<div class="ai-chatlist" id="aiChatList"></div>
+</aside>
+<div class="ai-main">
+<div class="ai-chatbar">
+<button type="button" class="icon ai-side-toggle" id="aiSideToggle" aria-label="Sohbet geçmişini aç">☰</button>
+<div class="ai-chat-title"><strong id="aiChatTitle">Yeni sohbet</strong><small id="aiChatMeta">Model seç ve yazmaya başla</small></div>
+<div class="ai-switches"><select id="aiProvSel" aria-label="AI sağlayıcısı"></select><select id="aiModelSel" aria-label="AI modeli"></select><button type="button" class="icon" id="aiModelRefresh" aria-label="Modelleri yenile" title="Modelleri yenile">↻</button></div>
+<button type="button" class="icon" id="aiChatMenu" aria-label="Sohbet işlemleri">⋯</button>
+<div class="ai-menu" id="aiMenu" hidden>
+<button type="button" data-act="rename">✏ Yeniden adlandır</button>
+<button type="button" data-act="pin">★ Sabitle</button>
+<button type="button" data-act="export">↧ Markdown indir</button>
+<button type="button" data-act="clear">⌫ Mesajları temizle</button>
+<div class="sep"></div>
+<button type="button" data-act="delete" class="danger">🗑 Sohbeti sil</button>
+</div>
+</div>
+<div class="ai-messages" id="aiMessages" aria-live="polite"></div>
+<div class="ai-composer">
+<div class="ai-ctools"><button type="button" class="ai-mini" id="aiPromptPick">📚 Promptlar</button><span class="ai-mini-hint" id="aiComposerHint"></span></div>
+<textarea id="aiInput" rows="1" placeholder="Bir şey sor…  (Enter: gönder · Shift+Enter: yeni satır)" aria-label="Mesaj"></textarea>
+<div class="ai-cactions"><span class="ai-key-hint" id="aiKeyHint"></span><button type="button" class="btn secondary" id="aiStop" hidden>Durdur</button><button type="button" class="btn primary" id="aiSend">Gönder</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="ai-tabpane" id="aiTabIdeas" hidden>
+<div class="panel">
+<div class="sectitle"><span class="num">💡</span><h3>Video fikirleri üret</h3></div>
+<p class="hint" style="margin:-6px 0 14px">Kayıtlı projelerindeki oyunlar ve etiketler bağlam olarak kullanılır; sonuçları tek tıkla projeye çevirebilirsin.</p>
+<div class="field"><label for="aiIdeaCtx">Nasıl fikirler istiyorsun? (isteğe bağlı)</label><input id="aiIdeaCtx" type="text" placeholder="Örn. komik anlar, yeni çıkan oyunlar, kısa seri" autocomplete="off"></div>
+<button type="button" class="btn primary" id="aiIdeaGo">✦ Fikir üret</button>
+<div class="ideas" id="aiIdeaOut"></div>
+</div>
+</div>
+
+<div class="ai-tabpane" id="aiTabPrompts" hidden>
+<div class="ai-section-head"><div><h3>Prompt kütüphanesi</h3><p class="hint">Sık kullandığın komutları kaydet, kategorilere ayır ve tek tıkla sohbete ekle.</p></div><button type="button" class="btn primary" id="aiPromptNew">+ Yeni prompt</button></div>
+<div class="libbar"><input type="search" id="aiPromptSearch" placeholder="Promptlarda ara…" aria-label="Promptlarda ara" autocomplete="off"><select id="aiPromptCat" aria-label="Kategoriye göre filtrele"></select></div>
+<div class="cat-chips" id="aiPromptCats"></div>
+<div class="prompt-grid" id="aiPromptGrid"></div>
+</div>
+
+<div class="ai-tabpane" id="aiTabProviders" hidden>
+<div class="ai-section-head"><div><h3>API sağlayıcıları</h3><p class="hint">Anahtarlar arayüzde maskelenir, yedeklere ve bulut senkronuna eklenmez. Bağlantıyı test ederek model listesini yenileyebilirsin.</p></div><button type="button" class="btn secondary" id="aiTestAll">Tüm bağlantıları test et</button></div>
+<div class="prov-grid" id="aiProvGrid"></div>
+<div class="panel usage-panel"><div class="sectitle"><span class="num">📊</span><h3>Kullanım</h3></div><div class="usage-total" id="aiUsageTotal"></div><div id="aiUsageRows"></div><p class="hint">Sayaçlar yalnızca bu cihazda tutulur; sağlayıcı faturasıyla birebir aynı olmayabilir.</p></div>
+</div>
+
+<datalist id="aiModelList"></datalist>
+<datalist id="aiCatList"></datalist>
+
+</section>
+<div class="dlgwrap" id="aiKeyDlg" hidden><div class="dlg ai-dlg" role="dialog" aria-modal="true" aria-labelledby="aiKeyT">
+<h3 id="aiKeyT">API anahtarı</h3><p id="aiKeySub"></p>
+<div class="ai-key-warn"><span>🔒</span><span><strong>Güvenlik:</strong> Anahtarın yalnızca cihazında saklanır, arayüzde gösterilmez ve yedeklere eklenmez. Kimseyle paylaşma; şüpheli durumda sağlayıcı panelinden iptal et.</span></div>
+<div class="field"><label for="aiKeyInput">Anahtar</label><input id="aiKeyInput" type="password" autocomplete="new-password" spellcheck="false" placeholder="Anahtarını yapıştır"><div class="hint" id="aiKeyHintText"></div></div>
+<label class="checkrow" for="aiKeyRemember"><input type="checkbox" id="aiKeyRemember"><span>Bu cihazda sakla<small>Kapalıysa anahtar yalnızca uygulama açıkken bellekte tutulur.</small></span></label>
+<div class="actions"><button type="button" class="btn primary" id="aiKeySave">Kaydet ve test et</button><button type="button" class="btn secondary" id="aiKeyCancel">İptal</button></div>
+<div class="hint" style="margin-top:10px"><button type="button" class="ai-mini" id="aiKeyDocs">Anahtar al ↗</button></div>
+</div></div>
+
+<div class="dlgwrap" id="aiPromptDlg" hidden><div class="dlg ai-dlg" role="dialog" aria-modal="true" aria-labelledby="aiPromptDlgT">
+<h3 id="aiPromptDlgT">Yeni prompt</h3>
+<div class="field"><label for="aiPromptTitle">Başlık</label><input id="aiPromptTitle" type="text" maxlength="80" placeholder="Örn. Tıklanabilir başlık üret" autocomplete="off"></div>
+<div class="row"><div class="field"><label for="aiPromptCatInput">Kategori</label><input id="aiPromptCatInput" type="text" list="aiCatList" maxlength="30" placeholder="Başlık" autocomplete="off"></div><div class="field"><label for="aiPromptTags">Etiketler</label><input id="aiPromptTags" type="text" placeholder="youtube, başlık" autocomplete="off"></div></div>
+<div class="field"><label for="aiPromptText">Prompt metni</label><textarea id="aiPromptText" placeholder="Modelin kullanacağı komut…"></textarea></div>
+<div class="actions"><button type="button" class="btn primary" id="aiPromptSave">Kaydet</button><button type="button" class="btn secondary" id="aiPromptCancel">İptal</button></div>
+</div></div>
+
+<div class="dlgwrap" id="aiNameDlg" hidden><div class="dlg ai-dlg" role="dialog" aria-modal="true" aria-labelledby="aiNameT">
+<h3 id="aiNameT">Sohbeti yeniden adlandır</h3>
+<div class="field"><label for="aiNameInput">Başlık</label><input id="aiNameInput" type="text" maxlength="70" autocomplete="off"></div>
+<div class="actions"><button type="button" class="btn primary" id="aiNameSave">Kaydet</button><button type="button" class="btn secondary" id="aiNameCancel">İptal</button></div>
+</div></div>
+
+<div class="dlgwrap" id="aiConfirm" hidden><div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="aiConfirmT">
+<h3 id="aiConfirmT">Emin misin?</h3><p id="aiConfirmX"></p>
+<div class="actions"><button type="button" class="btn danger" id="aiConfirmOk">Sil</button><button type="button" class="btn secondary" id="aiConfirmCancel">Vazgeç</button></div>
+</div></div>
+
+<div class="dlgwrap" id="aiPickerDlg" hidden><div class="dlg ai-dlg" role="dialog" aria-modal="true" aria-labelledby="aiPickerT">
+<h3 id="aiPickerT">Prompt seç</h3>
+<div class="field" style="margin-bottom:8px"><input id="aiPickerSearch" type="search" placeholder="Kütüphanede ara…" aria-label="Kütüphanede ara" autocomplete="off"></div>
+<div class="ai-picker" id="aiPickerList"></div>
+<div class="actions" style="margin-top:12px"><button type="button" class="btn secondary" id="aiPickerClose">Kapat</button></div>
+</div></div>
+
+<section id="viewSettings" hidden>
+<div class="crumbs"><button type="button" class="btn secondary" id="setBack">← Projelerim</button><span class="pname">Ayarlar</span></div>
+<div class="panel" style="max-width:720px">
+<section class="section"><div class="sectitle"><span class="num">🎨</span><h3>Renkler</h3></div>
+<div class="field"><span class="label">Tema</span><div class="seg" id="segMode" role="group" aria-label="Tema"><button type="button" data-v="system">Sistem</button><button type="button" data-v="light">Açık</button><button type="button" data-v="dark">Koyu</button></div></div>
+<div class="field"><span class="label">Vurgu rengi</span><div class="accents" id="accents" role="group" aria-label="Vurgu rengi"><label class="customsw" id="accCustomWrap" title="Özel renk"><input type="color" id="accCustom" value="#6a45f5" aria-label="Özel vurgu rengi"></label></div><div class="hint">Düğmeler, seçili sekmeler ve vurgular bu rengi kullanır. Sağdaki renk çarkından istediğin rengi seçebilirsin.</div></div>
+<div class="field"><span class="label">Arka plan teması</span><div class="accents" id="themes" role="group" aria-label="Arka plan teması"></div><div class="hint">Gece mavisi, orman yeşili, bordo, siyah (AMOLED), krem ve buz mavisi. Hazır tema seçiliyken yukarıdaki Açık/Koyu seçimi geçersiz olur. Varsayılan’a dönmek için ilk daireyi seç.</div></div></section>
+<section class="section"><div class="sectitle"><span class="num">Aa</span><h3>Görünüm</h3></div>
+<div class="field"><span class="label">Köşe yuvarlaklığı</span><div class="seg" id="segRadius" role="group" aria-label="Köşe yuvarlaklığı"><button type="button" data-v="4">Keskin</button><button type="button" data-v="14">Normal</button><button type="button" data-v="24">Yuvarlak</button></div></div>
+<div class="field"><span class="label">Yazı boyutu</span><div class="seg" id="segSize" role="group" aria-label="Yazı boyutu"><button type="button" data-v="0.9">Küçük</button><button type="button" data-v="1">Normal</button><button type="button" data-v="1.15">Büyük</button></div></div></section>
+<section class="section"><div class="sectitle"><span class="num">✦</span><h3>Hareket</h3></div>
+<div class="field"><span class="label">Animasyonlar</span><div class="seg" id="segMotion" role="group" aria-label="Animasyonlar"><button type="button" data-v="true">Açık</button><button type="button" data-v="false">Kapalı</button></div></div>
+<div class="field"><button type="button" class="btn secondary" id="setReset">Ayarları varsayılana döndür</button><div class="hint">Projelerine dokunmaz, yalnızca görünüm ayarlarını sıfırlar.</div></div></section>
+<section class="section" id="setAISection"><div class="sectitle"><span class="num">✦</span><h3>Yapay zekâ</h3></div>
+<p class="hint" style="margin:-6px 0 14px">Varsayılan sağlayıcı yeni sohbetlerde kullanılır. API anahtarlarını AI Studio → Sağlayıcılar bölümünden ekleyebilirsin.</p>
+<div class="row"><div class="field"><label for="setProvider">Varsayılan sağlayıcı</label><select id="setProvider"></select></div><div class="field"><label for="setModel">Varsayılan model</label><input id="setModel" type="text" list="aiModelList" placeholder="Model kimliği" autocomplete="off"></div></div>
+<div class="row"><div class="field"><label for="setLimit">Günlük soru sınırı</label><input id="setLimit" type="number" min="0" max="1000" inputmode="numeric"><div class="hint">0 = sınırsız. Sayaç bu cihazda tutulur.</div></div><div class="field"><label for="setReplyLang">Yanıt dili</label><select id="setReplyLang"><option value="tr">Türkçe</option><option value="en">English</option><option value="auto">Otomatik</option></select></div></div>
+<div class="field"><label for="setTemp">Yaratıcılık: <b id="setTempV">0.8</b></label><input id="setTemp" type="range" min="0" max="1.5" step="0.1"><div class="hint">Düşük değer daha tutarlı, yüksek değer daha yaratıcı yanıtlar üretir.</div></div>
+<div class="field"><label for="setSystem">Ek sistem talimatı (isteğe bağlı)</label><textarea id="setSystem" placeholder="Örn. Kısa maddelerle yanıt ver; gereksiz uzatma."></textarea></div>
+<div class="field"><label class="checkrow" for="setStoreKeys"><input type="checkbox" id="setStoreKeys"><span>API anahtarlarını bu cihazda sakla<small>Kapalıyken anahtarlar yalnızca uygulama açıkken bellekte tutulur. Anahtarlar hiçbir zaman yedek dosyasına veya bulut senkronuna eklenmez.</small></span></label></div>
+<div class="field"><div class="actions"><button type="button" class="btn primary" id="setAIOpen">✦ AI Studio’yu aç</button><button type="button" class="btn secondary" id="setAIClear">AI verilerini temizle</button></div><div class="hint">Temizleme sohbetleri, prompt kütüphanesini ve kayıtlı anahtarları siler; projelerine dokunmaz.</div></div></section>
+<section class="section"><div class="sectitle"><span class="num">📺</span><h3>Kanal bilgilerim</h3></div>
+<p class="hint" style="margin:-6px 0 14px">Bir kez yaz; her yeni proje bu bilgilerle başlar.</p>
+<div class="field"><label for="chYoutube">YouTube kanal bağlantısı</label><input id="chYoutube" type="text" placeholder="https://youtube.com/@kanalin" autocomplete="off"></div>
+<div class="field"><label for="chTiktok">TikTok hesabı veya bağlantısı</label><input id="chTiktok" type="text" placeholder="@kullanici" autocomplete="off"></div>
+<div class="field"><label for="chInstagram">Instagram hesabı veya bağlantısı</label><input id="chInstagram" type="text" placeholder="@kullanici" autocomplete="off"></div>
+<div class="field"><label for="chOther">Diğer bağlantılar</label><textarea id="chOther" placeholder="Twitch, Discord veya başka bağlantılar"></textarea></div>
+<div class="field"><label for="chCta">İzleyiciye çağrı</label><input id="chCta" type="text" placeholder="Videoyu beğenmeyi ve kanala abone olmayı unutma!" autocomplete="off"></div></section>
+<section class="section"><div class="sectitle"><span class="num">💾</span><h3>Yedekle ve geri yükle</h3></div>
+<div class="field"><div class="actions"><button type="button" class="btn primary" id="bkSave">Yedeği kaydet (.json)</button><button type="button" class="btn secondary" id="bkCopy">Yedeği kopyala</button></div><div class="hint">Projeler, kitaplıklar, çöp kutusu, kanal bilgileri ve ayarlar tek dosyada toplanır.</div></div>
+<div class="field"><label for="bkFile">Yedek dosyasından geri yükle</label><input type="file" id="bkFile" accept=".json,application/json"></div>
+<div class="field"><label for="bkText">Ya da yedek metnini yapıştır</label><textarea id="bkText"></textarea><button type="button" class="btn secondary" id="bkPaste" style="margin-top:8px">Metinden geri yükle</button><div class="hint">Geri yükleme mevcut projelerini silmez. Yedekteki projeleri ekler; aynı proje varsa daha yeni olanı tutar.</div></div></section>
+<section class="section"><div class="sectitle"><span class="num">☁️</span><h3>Bulut senkronu</h3></div>
+<p class="hint" style="margin:-6px 0 14px">Projelerin, kitaplıkların ve kanal bilgilerin birden fazla cihazda aynı olur. Tema ve renk ayarları her cihazda ayrı kalır. Ücretsiz bir Firebase projesi gerekir.</p>
+<div id="ySetup">
+<div class="field"><label for="yCfg">Firebase bilgilerin (ilk cihazda bir kez)</label><textarea id="yCfg" placeholder="apiKey ve projectId satırlarını buraya yapıştır"></textarea></div>
+<div class="field"><button type="button" class="btn primary" id="yCreate">Yeni senkron oluştur</button></div>
+<div class="field"><label for="yJoinCode">Ya da başka cihazdan aldığın davet kodunu yapıştır</label><input id="yJoinCode" type="text" autocomplete="off"><button type="button" class="btn secondary" id="yJoin" style="margin-top:8px">Katıl</button></div></div>
+<div id="yOnBox" hidden><div class="field"><div class="hint" id="ySt"></div></div>
+<div class="field"><div class="actions"><button type="button" class="btn primary" id="yInv">Davet kodunu kopyala</button><button type="button" class="btn secondary" id="yNow">Şimdi eşitle</button><button type="button" class="btn secondary" id="yOff">Senkronu kapat</button></div><div class="hint">Davet kodunu başka cihaza gönder, orada “Katıl” kısmına yapıştırılır. Kodu bilen herkes bu verilere erişir, kimseyle gelişigüzel paylaşma. Senkronu kapatınca verilerin bu cihazda kalır.</div></div></div></section>
+<section class="section"><div class="sectitle"><span class="num">🎓</span><h3>Eğitim</h3></div><div class="field"><button type="button" class="btn primary" id="tourBtn">Eğitimi baştan başlat</button><div class="hint">Ayarlardan başlayıp proje oluşturmayı, kaydetmeyi ve tüm özellikleri adım adım gösterir.</div></div></section>
+</div></section>
+<div id="viewEditor" hidden>
+<div class="crumbs"><button type="button" class="btn secondary" id="backBtn">← Projelerim</button><span class="pname" id="projName"></span><span class="dirty" id="dirtyTag" hidden>● Kaydedilmedi</span><button type="button" class="btn secondary" id="saveBtn">💾 Kaydet</button><button type="button" class="btn secondary" id="dupBtn">⧉ Yeni bölüm</button><button type="button" class="btn secondary" id="favBtn" aria-pressed="false">☆ Favori</button><button type="button" class="btn secondary" id="lockBtn" aria-pressed="false">🔓 Kilitle</button><button type="button" class="btn secondary" id="delBtn">🗑 Çöp kutusuna taşı</button></div>
+<div class="hero"><h2>YouTube içerik promptları</h2><p class="intro">Bilgilerini bir kez doldur; thumbnail, başlık ve açıklama için üç ayrı Türkçe prompt otomatik hazırlansın.</p></div>
+<div class="layout">
+<div class="panel" id="form">
+<section class="section"><div class="sectitle"><span class="num">01</span><h3>Video bilgileri</h3></div>
+<div class="field"><label for="game">Oynadığın oyunun adı</label><input id="game" type="text" value="" placeholder="Örn. Red Dead Redemption 2" autocomplete="off"><div class="hint">Arka plan, yazdığın oyuna uygun tarif edilir. Başka bir oyuna veya konuya ait alakasız sahneler eklenmez.</div></div>
+<div class="field"><label for="topic">Videonun konusu ve önemli anları</label><textarea id="topic" placeholder="Örn. Oyunun en eğlenceli anları, yeni karakterler, stratejik oyun oynama"></textarea></div>
+<div class="field"><label for="context">Ek bağlam (isteğe bağlı)</label><input id="context" type="text" placeholder="Örn. 3. bölüm, Türkçe gameplay, komik anlar" autocomplete="off"></div></section>
+
+<section class="section"><div class="sectitle"><span class="num">02</span><h3>Renk paleti ve görsel tarz</h3></div>
+<div class="field"><span class="label" id="presetlabel">Hazır renk paleti</span><div class="grid" id="presets" role="group" aria-labelledby="presetlabel">
+<button type="button" class="preset active" aria-pressed="true" data-preset="orange"><div class="swatches"><i style="background:#ff8c22"></i><i style="background:#b82028"></i><i style="background:#ffd83d"></i></div>Turuncu / Kırmızı</button>
+<button type="button" class="preset" aria-pressed="false" data-preset="red"><div class="swatches"><i style="background:#f42d38"></i><i style="background:#171717"></i><i style="background:#858585"></i></div>Kırmızı / Siyah</button>
+<button type="button" class="preset" aria-pressed="false" data-preset="blue"><div class="swatches"><i style="background:#168dff"></i><i style="background:#27e0ff"></i><i style="background:#8c42ff"></i></div>Mavi / Mor</button>
+<button type="button" class="preset" aria-pressed="false" data-preset="green"><div class="swatches"><i style="background:#56ef50"></i><i style="background:#101b16"></i><i style="background:#e5ff4f"></i></div>Yeşil / Neon</button>
+<button type="button" class="preset" aria-pressed="false" data-preset="purple"><div class="swatches"><i style="background:#873bff"></i><i style="background:#ed4ca5"></i><i style="background:#171329"></i></div>Mor / Pembe</button>
+<button type="button" class="preset" aria-pressed="false" data-preset="custom"><div class="swatches"><i id="sw1" style="background:#ff8c22"></i><i id="sw2" style="background:#b82028"></i><i id="sw3" style="background:#ffd83d"></i></div>Kendi renklerim</button></div></div>
+<div class="field"><span class="label">Hazır şablonlar (oyun türüne göre)</span><div class="seg" role="group" aria-label="Hazır şablonlar"><button type="button" data-tpl="korku">😱 Korku</button><button type="button" data-tpl="sim">🏪 Simülasyon</button><button type="button" data-tpl="yaris">🏎 Yarış</button><button type="button" data-tpl="aksiyon">💥 Aksiyon</button><button type="button" data-tpl="komedi">😂 Komedi</button></div><div class="hint">Renkleri, görsel tarzı, yazı stilini ve yüz ifadesini birlikte ayarlar. Sonra istediğin gibi değiştirebilirsin.</div></div>
+<div class="field"><span class="label">Kendi şablonlarım</span><div class="seg" id="myTpls" role="group" aria-label="Kendi şablonlarım"></div><div class="libbar" style="margin:10px 0 0"><input type="text" id="tplName" placeholder="Şablon adı (örn. Dönerci şablonu)" maxlength="40" autocomplete="off" aria-label="Şablon adı"><button type="button" class="btn secondary" id="tplSave">Şablon olarak kaydet</button></div><div class="hint">Şu anki renk, stil, fotoğraf ve prompt ayarlarını kaydeder. Oyun adı ve konu gibi içerik kaydedilmez.</div></div>
+<div class="field"><span class="label" id="ownlabel">Kendi renklerini seç</span><div class="colors" role="group" aria-labelledby="ownlabel">
+<div class="colorbox"><label for="c1">Ana renk</label><input type="color" id="c1" value="#ff8c22"><small id="c1v">#FF8C22</small></div>
+<div class="colorbox"><label for="c2">İkinci renk</label><input type="color" id="c2" value="#b82028"><small id="c2v">#B82028</small></div>
+<div class="colorbox"><label for="c3">Vurgu rengi</label><input type="color" id="c3" value="#ffd83d"><small id="c3v">#FFD83D</small></div></div><div class="hint">Renk kutusuna tıkla ve renk seçiciden istediğin rengi belirle.</div></div>
+<div class="field"><label for="style">Görsel tarzı</label><select id="style"><option value="Sinematik ışıklandırma, dramatik kontrast ve gerçekçi ayrıntılar">Sinematik ve dramatik</option><option value="Canlı renkler, enerjik atmosfer ve cilalı oyun görselleri">Renkli ve enerjik</option><option value="Gerçekçi dokular, doğal ışık ve keskin ayrıntılar">Gerçekçi ve doğal</option><option value="Karanlık korku atmosferi, derin gölgeler ve yoğun kırmızı ışık">Korku ve gerilim</option></select></div></section>
+
+<section class="section"><div class="sectitle"><span class="num">03</span><h3>Thumbnail yazısı</h3></div>
+<div class="field"><label for="thumb">Görselde yazacak metin</label><input id="thumb" type="text" value="" autocomplete="off"></div>
+<div class="field"><span class="label" id="txtlabel">Yazı ve efekt renkleri</span><div class="colors" role="group" aria-labelledby="txtlabel">
+<div class="colorbox"><label for="tc">Yazı rengi</label><input type="color" id="tc" value="#ffe33d"><small id="tcv">#FFE33D</small></div>
+<div class="colorbox"><label for="oc">Kenarlık rengi</label><input type="color" id="oc" value="#111111"><small id="ocv">#111111</small></div>
+<div class="colorbox"><label for="sc">Gölge rengi</label><input type="color" id="sc" value="#000000"><small id="scv">#000000</small></div></div></div>
+<div class="field"><label for="textstyle">Yazı stili</label><select id="textstyle"><option value="büyük, kalın ve mobil ekranda kolay okunur">Büyük ve kalın</option><option value="hacimli, 3D görünümlü ve kalın">3D ve hacimli</option><option value="sade, modern ve kolay okunur">Sade ve modern</option></select></div></section>
+
+<section class="section"><div class="sectitle"><span class="num">04</span><h3>Fotoğrafın ve kompozisyon</h3></div>
+<div class="row">
+<div class="field"><label for="frame">Fotoğrafta ne kadarın görünsün?</label><select id="frame"><option value="yalnızca kafa, temiz bir kadrajla">Sadece kafa</option><option value="kafa ve omuzlar" selected>Kafa ve omuzlar</option><option value="belden yukarısı">Belden yukarısı</option><option value="baştan ayağa tüm vücut">Tüm vücut</option><option value="none">Kişisel fotoğraf kullanma</option></select></div>
+<div class="field" id="exprwrap"><label for="expr">Yüz ifadesi</label><select id="expr"><option>heyecanlı ve enerjik</option><option>şaşkın</option><option>ciddi ve özgüvenli</option><option>mutlu</option><option>doğal</option></select></div></div>
+<div class="row">
+<div class="field" id="poswrap"><label for="position">Fotoğrafın konumu</label><select id="position"><option value="sol tarafta">Sol</option><option value="sağ tarafta">Sağ</option><option value="ortada">Orta</option><option value="kompozisyonu en iyi dengeleyecek yerde">Otomatik uygun konum</option></select></div>
+<div class="field"><label for="resolution">Çözünürlük</label><select id="resolution"><option value="4K, 3840 × 2160">4K — 3840 × 2160</option><option value="yüksek çözünürlüklü">Yüksek çözünürlük</option></select></div></div>
+<div class="field"><label for="background">Arka plan türü</label><select id="background"><option value="oyunun dünyasından, oyun adına ve video konusuna uygun bir sahne">Oyunun dünyasından uygun bir sahne</option><option value="oyunun dünyasına ve oynanışına uygun dinamik bir aksiyon sahnesi">Oyuna uygun aksiyon sahnesi</option><option value="oyunun kendi karakterlerini ve ortamlarını yansıtan bir sahne">Oyunun karakterleri ve ortamları</option><option value="oyunun dünyasına uygun sinematik bir manzara">Sinematik manzara</option><option value="oyunun atmosferinden esinlenen sade bir arka plan">Sade arka plan</option></select><div class="hint">Oyun ismine göre sahne tanımlanır; varsayılan olarak döner dükkânı gibi ilgisiz bir ortam eklenmez.</div></div>
+<div class="field"><label for="extra">Ek thumbnail talimatları</label><textarea id="extra">Yüz kimliğimi ve saç stilimi koru. Filigran ekleme. Metni mobil ekranda kolay okunabilir tut.</textarea></div></section>
+
+<section class="section"><div class="sectitle"><span class="num">05</span><h3>Başlık ve açıklama bilgileri</h3></div>
+<div class="field"><label for="keywords">Başlıkta vurgulansın istediğin kelimeler</label><input id="keywords" type="text" placeholder="Örn. yeni bölüm, büyük gelişim, komik anlar" autocomplete="off"></div>
+<div class="field"><label for="descinfo">Açıklamada bulunmasını istediğin bilgiler</label><textarea id="descinfo" placeholder="Videoda neler oldu? İzleyici ne bilsin?"></textarea></div>
+<div class="field"><label for="youtube">YouTube kanal bağlantısı (isteğe bağlı)</label><input id="youtube" type="text" placeholder="https://youtube.com/@kanalin" autocomplete="off"></div>
+<div class="row">
+<div class="field"><label for="tiktok">TikTok hesabı veya bağlantısı</label><input id="tiktok" type="text" placeholder="@kullanici veya profil bağlantısı" autocomplete="off"></div>
+<div class="field"><label for="instagram">Instagram hesabı veya bağlantısı</label><input id="instagram" type="text" placeholder="@kullanici veya profil bağlantısı" autocomplete="off"></div></div>
+<div class="field"><label for="other">Diğer bağlantılar</label><textarea id="other" placeholder="Twitch, Discord veya başka bağlantılar"></textarea></div>
+<div class="field"><label for="cta">İzleyiciye çağrı</label><input id="cta" type="text" value="Videoyu beğenmeyi ve kanala abone olmayı unutma!" autocomplete="off"></div>
+<div class="field"><label for="tone">Açıklama tonu</label><select id="tone"><option>samimi ve doğal</option><option>enerjik ve eğlenceli</option><option>kısa ve doğrudan</option><option>arama dostu ama doğal</option></select></div>
+<div class="field"><button type="button" class="btn secondary" id="chFill">Kanal bilgilerimi getir</button><div class="hint">Ayarlar sayfasındaki YouTube, TikTok, Instagram bağlantılarını ve çağrı metnini bu projeye yazar.</div></div></section>
+<section class="section"><div class="sectitle"><span class="num">06</span><h3>Prompt ayarları</h3></div>
+<div class="field"><label for="lang">Prompt dili</label><select id="lang"><option value="tr">Türkçe</option><option value="en">English</option></select><div class="hint">İngilizce seçersen talimatlar İngilizce yazılır. Thumbnail yazısı ve elle yazdığın bilgiler olduğu gibi kalır.</div></div>
+<div class="row"><div class="field"><label for="titleN">Başlık önerisi sayısı</label><select id="titleN"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+<div class="field"><label for="hashN">Hashtag sayısı</label><select id="hashN"><option value="">Otomatik (birkaç)</option><option>3</option><option>5</option><option>8</option><option>10</option></select></div></div></section>
+<section class="section"><div class="sectitle"><span class="num">07</span><h3>Takip ve notlar</h3></div>
+<div class="row"><div class="field"><label for="status">Videonun durumu</label><select id="status"><option>Fikir</option><option>Çekildi</option><option>Kurgu</option><option>Yayında</option></select></div>
+<div class="field"><label for="pubdate">Yayın tarihi</label><input id="pubdate" type="date"></div></div>
+<div class="field"><label for="tags">Etiketler (virgülle ayır)</label><input id="tags" type="text" placeholder="Örn. dönerci, seri, komik" autocomplete="off"></div>
+<div class="field"><label for="notes">Notlar</label><textarea id="notes" placeholder="Kendine notlar, yapılacaklar…"></textarea></div></section>
+</div>
+
+<aside class="panel out" aria-labelledby="outtitle">
+<div class="sectitle"><span class="num">✦</span><h3 id="outtitle">Oluşturulan promptlar</h3></div>
+<p class="hint" style="margin:-6px 0 16px">Üç prompt da Türkçedir ve seçimlerin değiştikçe otomatik güncellenir.</p>
+<div class="prompt"><div class="prompthead"><strong>01 · Thumbnail promptu</strong><span class="count" id="n1"></span><button type="button" class="btn secondary" data-open="p1">Aç ↗</button><button type="button" class="btn secondary" data-copy="p1">Kopyala</button></div><div class="promptbody" id="p1"></div></div>
+<div class="prompt"><div class="prompthead"><strong>02 · Başlık promptu</strong><span class="count" id="n2"></span><button type="button" class="btn secondary" data-open="p2">Aç ↗</button><button type="button" class="btn secondary" data-copy="p2">Kopyala</button></div><div class="promptbody" id="p2"></div></div>
+<div class="prompt"><div class="prompthead"><strong>03 · Açıklama promptu</strong><span class="count" id="n3"></span><button type="button" class="btn secondary" data-open="p3">Aç ↗</button><button type="button" class="btn secondary" data-copy="p3">Kopyala</button></div><div class="promptbody" id="p3"></div></div>
+<div class="actions"><button type="button" class="btn primary" id="copyall">Üç promptu birlikte kopyala</button><button type="button" class="btn secondary" id="download">Üçünü .txt olarak indir</button><button type="button" class="btn secondary" id="reset">Ayarları sıfırla</button></div>
+<p id="statusmsg" class="hint" role="status" aria-live="polite"></p>
+</aside>
+</div>
+</div>
+</main>
+<div class="selbar" id="selbar" hidden><span id="selN">0 seçili</span><button type="button" class="btn secondary" id="selAll">Hepsi</button><button type="button" class="btn secondary" id="selFav">☆ Favori</button><button type="button" class="btn secondary" id="selMove">📁 Taşı</button><button type="button" class="btn secondary" id="selTrash">🗑 Çöp</button><button type="button" class="btn primary" id="selDone">Bitti</button></div>
+<button type="button" class="btn primary fab" id="saveFab" hidden>💾 Kaydet</button>
+<div class="dlgwrap" id="dlg" hidden><div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h3 id="dlgT">Değişiklikleri kaydedeyim mi?</h3><p>Bu projede kaydedilmemiş değişiklikler var.</p><div class="actions"><button type="button" class="btn primary" id="dlgSave">Kaydet</button><button type="button" class="btn secondary" id="dlgDiscard">Kaydetme</button><button type="button" class="btn secondary" id="dlgCancel">İptal</button></div></div></div>
+<div class="tour" id="tour" hidden><div class="tmask" id="tmask" hidden></div><div class="thole" id="thole" hidden></div><div class="tcard" id="tcard" role="dialog" aria-live="polite"><div class="tstep" id="tstep"></div><h3 id="tT"></h3><p id="tX"></p><div class="tbtns"><button type="button" class="btn secondary" id="tSkip">Atla</button><span class="spacer"></span><button type="button" class="btn secondary" id="tBack">Geri</button><button type="button" class="btn primary" id="tNext">İleri</button></div></div></div>
+<nav class="bnav" id="bnav" aria-label="Ana gezinme"><button type="button" data-bn="all"><i>▦</i><small>Projeler</small></button><button type="button" data-bn="fav"><i>☆</i><small>Favoriler</small></button><button type="button" data-bn="add" aria-label="Yeni proje"><i>＋</i><small>Yeni</small></button><button type="button" data-bn="ai"><i>✦</i><small>AI</small></button><button type="button" data-bn="cal"><i>📅</i><small>Takvim</small></button><button type="button" data-bn="lib"><i>📁</i><small>Kitaplık</small></button></nav>
+<div class="menu" id="menu" role="menu" hidden></div><div class="toast" id="toast" role="status" hidden></div>
+<script src="app.js"></script>
+<script src="ai.js"></script>
+</body>
+</html>

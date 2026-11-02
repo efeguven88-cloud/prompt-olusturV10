@@ -1,0 +1,8 @@
+{
+  "appId": "com.efe.promptolustur",
+  "appName": "Prompt Olustur",
+  "webDir": "www",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "force"
+  }
+}
